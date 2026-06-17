@@ -19,7 +19,22 @@ function bePositive($arr, $arrayNumber)
     printScenario3ArrayInfo($arr, $arrayNumber);
     // This should be solved without Copilot auto-completion, to toggle it, click the Copilot chat bubble at the top of the editor.
     //  Configure inline suggestions to "Disabled Inline Suggestions" (or similar) when writing code for this problem.
+   
+        foreach ($arr as $num => $numb) {
+    if (is_string($numb)) {
+        if ($numb[0] == "-") {
+            $output[$num] = "" . substr($numb, 1);
+        } else {
+            $output[$num] = "" . $numb;
+        }
+    } else {
+        $output[$num] = abs($numb);
+    }
+}
+
     
+    
+
     // Challenge 1: Make each value positive
     // Challenge 2: Keep or restore each value's original data type and assign it to the proper slot in the `output` array
     // Note: You do not control the bracketed type labels in the output; base.php prints them so you can verify your data types.
