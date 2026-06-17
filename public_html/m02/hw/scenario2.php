@@ -27,15 +27,16 @@ function sumValues($arr, $arrayNumber)
     // Step 1: sketch out plan using comments (include ucid and date)
     // Step 2: Add/commit your outline of comments (required for full credit)
     // Step 3: Add code to solve the problem (add/commit as needed)
-
+//making an array to print out the sum of array for two decimal places jal257 & 6/17/2026
     $total = 0;
     // Start Solution Edits
     // Solve Challenge 1 here: Sum all values
-
-
+foreach ($arr as $num){
+    $total += $num;
+}
     // Solve Challenge 2 here: Format to 2 decimal places
     $modifiedTotal = "?";
-
+$modifiedTotal = number_format($total, 2, ".", "");
     // End Solution Edits
     printScenario2Output($total, $modifiedTotal);
     echo "</div>";
