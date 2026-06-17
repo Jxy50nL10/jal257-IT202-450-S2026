@@ -23,7 +23,7 @@ function printOdds($arr, $arrayNumber)
     // Step 1: sketch out plan using comments (include ucid and date)
     // Step 2: Add/commit your outline of comments (required for full credit)
     // Step 3: Add code to solve the problem (add/commit as needed)
-
+    //printing out odd values followed with a comma and space. jal257 & 6/17/2026
     
     $output_result = "";
     // Start Solution Edits
