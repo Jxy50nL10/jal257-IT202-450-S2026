@@ -27,7 +27,7 @@ function bePositive($arr, $arrayNumber)
     // Step 1: sketch out plan using comments (include ucid and date)
     // Step 2: Add/commit your outline of comments (required for full credit)
     // Step 3: Add code to solve the problem (add/commit as needed)
-
+// make an array for absolute values for each input jal257 & 6/17/2026
     $output = array_fill(0, count($arr), null); // Initialize output array
     // Start Solution Edits
 
