@@ -31,11 +31,12 @@ function sumValues($arr, $arrayNumber)
     $total = 0;
     // Start Solution Edits
     // Solve Challenge 1 here: Sum all values
-
-
+foreach ($arr as $num){
+    $total += $num;
+}
     // Solve Challenge 2 here: Format to 2 decimal places
     $modifiedTotal = "?";
-
+$modifiedTotal = number_format($total, 2, ".", "");
     // End Solution Edits
     printScenario2Output($total, $modifiedTotal);
     echo "</div>";
