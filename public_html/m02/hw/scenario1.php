@@ -35,7 +35,7 @@ function printOdds($arr, $arrayNumber)
    }
 
    }
- $output_result = implode(" ,", $oddNumbers);
+ $output_result = implode(",",$oddNumbers);
     // End Solution Edits
     printScenario1Output($output_result);
     echo "/div";
