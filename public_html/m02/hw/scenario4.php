@@ -29,7 +29,8 @@ function transformText($arr, $arrayNumber) {
     // If the phrase is too short to have any middle characters, use "Not enough characters".
     // Examples: "short" -> "hor", "even" -> "ve", "eve" -> "v", "a" -> "Not enough characters", "abcdef" -> "cde".
     // Assign result to 'placeholderForMiddleCharacters'
-
+//going to add an if statement to remove extra spacing jal257 & 6/17/2026
+//had difficulty coding this scenario
     $placeholderForModifiedPhrase = "";
     $placeholderForMiddleCharacters = "";
     foreach ($arr as $index => $text) {
