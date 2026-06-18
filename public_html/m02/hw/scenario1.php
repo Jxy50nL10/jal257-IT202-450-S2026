@@ -3,7 +3,7 @@
 // @ts-nocheck
 require_once "base.php";
 
-$ucid = "mt85"; // <-- set your ucid
+$ucid = "jal257"; // <-- set your ucid
 
 // Don't edit the arrays below, they are used to test your code
 $array1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -23,15 +23,22 @@ function printOdds($arr, $arrayNumber)
     // Step 1: sketch out plan using comments (include ucid and date)
     // Step 2: Add/commit your outline of comments (required for full credit)
     // Step 3: Add code to solve the problem (add/commit as needed)
-
+// added planning comments for scenario 1 to print odd values jal257 & 6/17/2026
     
     $output_result = "";
     // Start Solution Edits
     // set solution to $output_result variable
-   
+   $oddNumbers = [];
+   foreach ($arr as $num){
+   if ($num % 2 != 0){
+    $oddNumbers[] = $num;
+   }
+
+   }
+ $output_result = implode(",",$oddNumbers);
     // End Solution Edits
     printScenario1Output($output_result);
-    echo "</div>";
+    echo "/div";
 }
 
 // Run the problem
