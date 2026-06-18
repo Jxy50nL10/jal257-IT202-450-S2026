@@ -20,17 +20,7 @@ function bePositive($arr, $arrayNumber)
     // This should be solved without Copilot auto-completion, to toggle it, click the Copilot chat bubble at the top of the editor.
     //  Configure inline suggestions to "Disabled Inline Suggestions" (or similar) when writing code for this problem.
    
-        foreach ($arr as $num => $numb) {
-    if (is_string($numb)) {
-        if ($numb[0] == "-") {
-            $output[$num] = "" . substr($numb, 1);
-        } else {
-            $output[$num] = "" . $numb;
-        }
-    } else {
-        $output[$num] = abs($numb);
-    }
-}
+   
 
     
     
@@ -45,7 +35,17 @@ function bePositive($arr, $arrayNumber)
 // make an array for absolute values for each input jal257 & 6/17/2026
     $output = array_fill(0, count($arr), null); // Initialize output array
     // Start Solution Edits
-
+foreach ($arr as $num => $numb) {
+        if (is_string($numb)) {
+            if ($numb[0] == "-") {
+                $output[$num] = "" . substr($numb, 1);
+            } else {
+                $output[$num] = "" . $numb;
+            }
+        } else {
+            $output[$num] = abs($numb);
+        }
+    }
 
     // End Solution Edits
     printScenario3Output($output);
