@@ -51,7 +51,7 @@ Notes:
         </ul>
     </nav>
     <!-- Edit your UCID here -->
-    <header>Header Section (mt85)</header>
+    <header>Header Section (jal257)</header>
     <!-- Don't make any other edits to the HTML -->
     <div class="container">
         <aside id="left-sidebar">
@@ -118,17 +118,105 @@ Notes:
     <script src="utils.js"></script>
 
     <script>
+     
         /*
-            Add UCID/date and planning comments before your JavaScript solution.
-            Solve the sidebar toggle logic here by attaching appropriate event listeners.
+            jal257 7/9/2026
+            Plan:
+            I added a click event to each sidebar button. Each button only changes
+            its sidebar for each side.
         */
+
+        const leftSidebar = document.querySelector("#left-sidebar");
+        const rightSidebar = document.querySelector("#right-sidebar");
+
+        const leftButton = leftSidebar.querySelector("button");
+        const rightButton = rightSidebar.querySelector("button");
+
+        leftButton.addEventListener("click", function () {
+            leftSidebar.classList.toggle("collapsed");
+        });
+
+        rightButton.addEventListener("click", function () {
+            rightSidebar.classList.toggle("collapsed");
+        });
     </script>
 
     <style>
+    
         /*
-            Add UCID/date and planning comments before your CSS solution.
-            Write Challenge 2 layout CSS here; do not override anything in styles.css.
+            jal257 7/9/2026
+            Plan:
+            I made the page fit the browser window and used flexbox for the layout.
+    
         */
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body.challenge2 {
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.challenge2 header {
+            flex: 0 0 auto;
+        }
+
+        body.challenge2 .container {
+            flex: 1;
+            display: flex;
+            min-height: 0;
+            width: 100%;
+        }
+
+        body.challenge2 aside {
+            flex: 0 0 15%;
+            position: relative;
+            overflow: visible;
+            transition: flex-basis 0.3s ease;
+        }
+
+        body.challenge2 .content {
+            flex: 1;
+            min-width: 0;
+            overflow-y: auto;
+        }
+
+        body.challenge2 aside button {
+            position: absolute;
+            top: 1rem;
+            z-index: 20;
+            cursor: pointer;
+        }
+
+        body.challenge2 #left-sidebar button {
+            right: 0.5rem;
+        }
+
+        body.challenge2 #right-sidebar button {
+            left: 0.5rem;
+        }
+
+        body.challenge2 aside.collapsed {
+            flex-basis: 0;
+        }
+
+        body.challenge2 aside.collapsed ul {
+            display: none;
+        }
+
+        body.challenge2 #left-sidebar.collapsed button {
+            right: -2rem;
+        }
+
+        body.challenge2 #right-sidebar.collapsed button {
+            left: -2rem;
+        }
     </style>
 </body>
 
