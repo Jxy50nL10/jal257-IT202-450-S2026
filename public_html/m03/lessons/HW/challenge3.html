@@ -54,7 +54,7 @@ Notes:
         </ul>
     </nav>
     <!-- Edit your UCID here -->
-    <header>Header Section (mt85)</header>
+    <header>Header Section (jal257)</header>
     <!-- Don't make any other edits to the HTML -->
     <nav>
         <button>Previous</button>
@@ -110,17 +110,140 @@ Notes:
     <script src="utils.js"></script>
 
     <script>
+      
         /*
-            Add UCID/date and planning comments before your JavaScript solution.
-            Solve the carousel button logic here by attaching appropriate event listeners.
+            jal257 7/9/2026
+            Plan:
+            I used a counter to keep track of the current panel.
+            The previous and next buttons change the counter, and the panels loop
+            back around when they reach the beginning or end.
         */
+
+        const panels = document.querySelectorAll(".panel");
+        const carouselButtons = document.querySelectorAll("body.challenge3 > nav button");
+
+        let currentPanel = 0;
+        let startX = 0;
+        let endX = 0;
+
+        function showPanel(panelNumber) {
+            for (let i = 0; i < panels.length; i++) {
+                panels[i].classList.remove("active");
+            }
+
+            panels[panelNumber].classList.add("active");
+        }
+
+        function showPreviousPanel() {
+            currentPanel--;
+
+            if (currentPanel < 0) {
+                currentPanel = panels.length - 1;
+            }
+
+            showPanel(currentPanel);
+        }
+
+        function showNextPanel() {
+            currentPanel++;
+
+            if (currentPanel >= panels.length) {
+                currentPanel = 0;
+            }
+
+            showPanel(currentPanel);
+        }
+
+        carouselButtons[0].addEventListener("click", function () {
+            showPreviousPanel();
+        });
+
+        carouselButtons[1].addEventListener("click", function () {
+            showNextPanel();
+        });
+
+        const carousel = document.querySelector(".carousel");
+
+        carousel.addEventListener("mousedown", function (event) {
+            startX = event.clientX;
+        });
+
+        carousel.addEventListener("mouseup", function (event) {
+            endX = event.clientX;
+
+            if (startX - endX > 50) {
+                showNextPanel();
+            }
+
+            if (endX - startX > 50) {
+                showPreviousPanel();
+            }
+        });
+
+        showPanel(currentPanel);
     </script>
 
     <style>
+
         /*
-            Add UCID/date and planning comments before your CSS solution.
-            Write Challenge 3 layout CSS here; do not override anything in styles.css.
+            jal257 7/9/2026
+            Plan:
+            I made the page use the full browser height and centered the carousel buttons.
+    
         */
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body.challenge3 {
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.challenge3 header {
+            flex: 0 0 auto;
+        }
+
+        body.challenge3 > nav:nth-of-type(2) {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex: 0 0 auto;
+        }
+
+        body.challenge3 .carousel {
+            flex: 1;
+            width: 100%;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        body.challenge3 .carousel-container {
+            height: 100%;
+            width: 100%;
+        }
+
+        body.challenge3 .panel {
+            height: 100%;
+            width: 100%;
+            display: none;
+        }
+
+        body.challenge3 .panel.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        body.challenge3 .panel.active > div {
+            max-width: 90%;
+        }
     </style>
 </body>
 
