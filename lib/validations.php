@@ -18,7 +18,7 @@ function validate_email(string $email, array &$errors): bool
 function validate_username(string $username, array &$errors): bool
 {
     if (!preg_match('/^[a-z0-9_-]{3,30}$/', $username)) {
-        $errors[] = "Use 3-30 lowercase letters, numbers, underscores, or hyphens.";
+        $errors[] = "Use 3-30 lowercase letters, numbers, underscores, or hyphens for username.";
         return false;
     }
 

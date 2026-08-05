@@ -26,13 +26,14 @@ function validate_email(emailInput, errors) {
 }
 
 function validate_username(usernameInput, errors) {
+    console.log(usernameInput.validity);
     if (
         usernameInput.validity.valueMissing
         || usernameInput.validity.tooShort
         || usernameInput.validity.tooLong
         || usernameInput.validity.patternMismatch
     ) {
-        errors.push("Use 3-30 lowercase letters, numbers, underscores, or hyphens.");
+        errors.push("Use 3-30 lowercase letters, numbers, underscores, or hyphens for username.");
         return false;
     }
 

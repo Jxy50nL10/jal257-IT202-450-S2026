@@ -68,8 +68,8 @@ nav li a:hover {
 
 nav::after {
     text-align: center;
-    content: "(*Edit the hideous css)";
-    color: red;
+    content: "Web Content";
+    color: rgb(15, 14, 14);
 }
 
 label {
