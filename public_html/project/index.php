@@ -13,9 +13,9 @@ require_once(__DIR__ . "/../../lib/app.php");
     <?php render_nav(); ?>
     <div class="jumbotron">
         <!-- TODO replace your name -->
-        <h1 class="display-4">Welcome to Matt's project</h1>
+        <h1 class="display-4">Welcome to Jayson's project</h1>
         <!-- TODO change Date/Semester accordingly -->
-        <p class="lead">This is for the Summer semester of IT202 2026.</p>
+        <p class="lead">Register or login in to the website.</p>
     </div>
 </body>
 </html>
