@@ -4,24 +4,37 @@ $errors = [];
 $email = "";
 
 if (isset($_POST["email"], $_POST["password"], $_POST["confirm_password"])) {
-    $email = filter_var(trim($_POST["email"]), FILTER_SANITIZE_EMAIL);
+    $email = <?php
+// File: public_html/project/register.php
+// Existing require_once, message setup, and earlier page variables stay above this block.
+// Replace the earlier POST validation block with this helper-based version.
+$errors = [];
+$email = "";
+
+if (isset($_POST["email"], $_POST["password"], $_POST["confirm_password"])) {
+    $email = sanitize_email($_POST["email"]);
     $password = $_POST["password"];
     $confirmPassword = $_POST["confirm_password"];
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Enter a valid email address.";
-    }
+    validate_email($email, $errors);
+    validate_password($password, $errors);
+    validate_passwords_match($password, $confirmPassword, $errors);
 
-    if (strlen($password) < 8) {
-        $errors[] = "Password must be at least 8 characters.";
+    if (empty($errors)) {
+        // Existing password_hash and INSERT code continues here.
     }
+}
+// Existing HTML form stays below this block.
+?>
+;
+    $password = $_POST["password"];
+    $confirmPassword = $_POST["confirm_password"];
 
-    if ($password !== $confirmPassword) {
-        $errors[] = "Passwords must match.";
-    }
-    echo "<pre>";
-    echo var_export($errors, true);
-    echo "</pre>";
+     validate_email($email, $errors);
+    validate_password($password, $errors);
+    validate_passwords_match($password, $confirmPassword, $errors);
+
+   
     
         // TODO: connect to the database, hash the password, and insert the user.
         if (empty($errors)) {
@@ -100,25 +113,13 @@ if (isset($_POST["email"], $_POST["password"], $_POST["confirm_password"])) {
 <script>
 function validate(form) {
     const message = document.querySelector("#form-message");
-    const email = form.email.value.trim();
-    const password = form.password.value;
-    const confirmPassword = form.confirm_password.value;
     const errors = [];
 
-    if (!email || !form.email.validity.valid) {
-        errors.push("Enter a valid email address.");
-    }
+    validate_email(form.email, errors);
+    validate_password(form.password, errors);
+    validate_passwords_match(form.password, form.confirm_password, errors);
 
-    if (password.length < 8) {
-        errors.push("Password must be at least 8 characters.");
-    }
-
-    if (password !== confirmPassword) {
-        errors.push("Passwords must match.");
-    }
-
-    message.innerHTML = errors.join("<br>");
-    return errors.length === 0;
+     return show_validation_errors(message, errors);
 }
 </script>
 
