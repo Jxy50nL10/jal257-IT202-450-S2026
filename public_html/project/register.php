@@ -28,8 +28,9 @@ if (isset($_POST["email"], $_POST["password"], $_POST["confirm_password"])) {
             ]);
 
             error_log("Registration insert succeeded for user id " . $db->lastInsertId());
-            echo "Registration saved. This temporary message can be replaced later.";
+             flash("Account created. Please log in.", "success");
             $email = "";
+             header("Location: login.php");
         } catch (PDOException $e) {
             if ($e->getCode() === "23000") {
                 $errors[] = "That email is already registered.";
@@ -39,6 +40,9 @@ if (isset($_POST["email"], $_POST["password"], $_POST["confirm_password"])) {
             }
         }
     }
+    flash_errors($errors);
+   // header("Location: register.php");\
+   //exit;
 }
 ?>
 <!doctype html>
@@ -61,7 +65,7 @@ if (isset($_POST["email"], $_POST["password"], $_POST["confirm_password"])) {
     }
     ?>
     <form method="post" action="register.php" onsubmit="return validate(this);">
-        <p id="form-message"></p>
+        
         <label for="email">Email</label>
         <input id="email" name="email" type="email"
             required autocomplete="email"
@@ -90,6 +94,8 @@ if (isset($_POST["email"], $_POST["password"], $_POST["confirm_password"])) {
             return show_validation_errors(message, errors);
         }
     </script>
+     <!-- Last PHP inside <body> so it captures messages queued during this request. -->
+    <?php render_flash_messages(); ?>
 </body>
 
 </html>

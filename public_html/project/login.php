@@ -46,9 +46,15 @@ if (isset($_POST["email"], $_POST["password"])) {
         $user["user_id"] = (int) $user["user_id"];
         unset($user["password_hash"]);
         $_SESSION["user"] = $user;
+       // Add flash feedback before the existing redirect.
+        flash("Welcome back.", "success");
         header("Location: dashboard.php");
         exit;
     }
+    // Any validation, lookup, or password errors collected above show on the same form.
+    flash_errors($errors);
+    // header("Location: login.php");
+    // exit;
 }
 
 $message = implode("<br>", array_map("htmlspecialchars", $errors));
@@ -65,7 +71,7 @@ $message = implode("<br>", array_map("htmlspecialchars", $errors));
 <body>
     <?php render_nav(); ?>
     <h1>Login</h1>
-    <p id="message"><?php echo $message; ?></p>
+    
     <form method="post" action="login.php" onsubmit="return validate(this)">
         <label for="email">Email</label>
         <input id="email" name="email" type="email" required
@@ -90,6 +96,8 @@ $message = implode("<br>", array_map("htmlspecialchars", $errors));
             return show_validation_errors(message, errors);
         }
     </script>
+     <!-- Last PHP inside <body> so it captures messages queued during this request. -->
+    <?php render_flash_messages(); ?>
 </body>
 
 </html>
