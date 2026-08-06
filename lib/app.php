@@ -13,4 +13,9 @@ require_once(__DIR__ . "/flash_messages.php");
 require_once(__DIR__ . "/duplicate_user_details.php");
 // require_role() depends on flash() and project_url().
 require_once(__DIR__ . "/role_helpers.php");
+// lib/app.php
+// Add this at the end of the existing helper-import list.
+// api_helper.php loads load_api_keys.php before declaring API functions.
+require_once(__DIR__ . "/api_helper.php");
+
 ?>
