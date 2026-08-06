@@ -27,7 +27,7 @@
         opacity: 0.9;
         z-index: 1000;
         position: fixed;
-        top: 1rem;
+        top: 2rem;
     }
 
     #flash:empty,
