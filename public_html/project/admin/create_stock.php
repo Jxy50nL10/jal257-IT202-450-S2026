@@ -91,8 +91,30 @@ if ($row && empty($errors)) {
         ":latest_trading_day" => $row["latest_trading_day"],
         ":is_api" => $row["is_api"],
     ];
-
     try {
+        // insert($table_name, $data, $opts): table name, row data, optional settings.
+        insert("Stocks", $insert_row, ["debug"=>true]);
+        flash("Created stock " . $insert_row["symbol"], "success");
+        header("Location: " . project_url("admin/list_stocks.php"));
+        exit;
+    } catch (PDOException $e) {
+        error_log("Create stock failed: " . $e->getMessage());
+        $error_code = 0;
+        if (isset($e->errorInfo[1])) {
+            $error_code = (int)$e->errorInfo[1];
+        }
+
+        if ($error_code === 1062) {
+            flash("A stock with this symbol already exists. No changes were made.", "warning");
+        } else {
+            flash("Unable to create stock.", "danger");
+        }
+    } catch (Throwable $e) {
+        error_log("Stock insert helper failed: " . $e->getMessage());
+        flash("Unable to save stock data.", "danger");
+    }
+
+    /*try {
         $db = getDB();
         $stmt = $db->prepare(
             "INSERT INTO Stocks (symbol, open, high, low, price, latest_trading_day, is_api)
@@ -114,7 +136,7 @@ if ($row && empty($errors)) {
         } else {
             flash("Unable to create stock.", "danger");
         }
-    }
+    }*/
 }
 
 flash_errors($errors);
@@ -122,11 +144,13 @@ flash_errors($errors);
 <!-- TODO add the create stock form snippet here. -->
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Stock</title>
 </head>
+
 <body>
     <?php render_nav(); ?>
     <main>
@@ -137,7 +161,9 @@ flash_errors($errors);
             <button data-form-mode-button="create" type="button">Create Manually</button>
         </div>
 
-        <section data-form-mode-panel="fetch"<?php if ($active_form !== "fetch") { echo " hidden"; } ?>>
+        <section data-form-mode-panel="fetch" <?php if ($active_form !== "fetch") {
+                                                    echo " hidden";
+                                                } ?>>
             <form method="post">
                 <h2>Fetch From API</h2>
                 <label for="symbol_fetch">Symbol</label>
@@ -146,7 +172,9 @@ flash_errors($errors);
             </form>
         </section>
 
-        <section data-form-mode-panel="create"<?php if ($active_form !== "create") { echo " hidden"; } ?>>
+        <section data-form-mode-panel="create" <?php if ($active_form !== "create") {
+                                                    echo " hidden";
+                                                } ?>>
             <form method="post">
                 <h2>Create Manually</h2>
                 <label for="symbol_create">Symbol</label>
@@ -177,16 +205,16 @@ flash_errors($errors);
         const stockFormPanels = document.querySelectorAll("[data-form-mode-panel]");
 
         function showStockForm(mode) {
-            stockFormPanels.forEach(function (panel) {
+            stockFormPanels.forEach(function(panel) {
                 panel.hidden = panel.dataset.formModePanel !== mode;
             });
-            stockFormButtons.forEach(function (button) {
+            stockFormButtons.forEach(function(button) {
                 button.setAttribute("aria-pressed", button.dataset.formModeButton === mode ? "true" : "false");
             });
         }
 
-        stockFormButtons.forEach(function (button) {
-            button.addEventListener("click", function () {
+        stockFormButtons.forEach(function(button) {
+            button.addEventListener("click", function() {
                 showStockForm(button.dataset.formModeButton);
             });
         });
@@ -194,4 +222,5 @@ flash_errors($errors);
         showStockForm("<?php echo $active_form; ?>");
     </script>
 </body>
+
 </html>
