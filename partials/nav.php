@@ -6,14 +6,20 @@ $isLoggedIn = is_logged_in();
 <nav>
     <ul>
         <li><a href="/project/index.php">Home</a></li>
-            <?php if ($isLoggedIn): ?>
-    <li><a href="<?php echo project_url('dashboard.php'); ?>">Dashboard</a></li>
-    <li><a href="<?php echo project_url('profile.php'); ?>">Profile</a></li>
-    <?php if (has_role("Admin")): ?>
-        <li><a href="<?php echo project_url('admin/create_role.php'); ?>">Create Role</a></li>
-        <li><a href="<?php echo project_url('admin/list_roles.php'); ?>">List Roles</a></li>
-        <li><a href="<?php echo project_url('admin/assign_roles.php'); ?>">Assign Roles</a></li>
-    <?php endif; ?>
+        <?php if ($isLoggedIn): ?>
+            <li><a href="<?php echo project_url('dashboard.php'); ?>">Dashboard</a></li>
+            <li><a href="<?php echo project_url('profile.php'); ?>">Profile</a></li>
+            <?php if (has_role("Admin")): ?>
+                <li><a href="<?php echo project_url('admin/create_role.php'); ?>">Create Role</a></li>
+                <li><a href="<?php echo project_url('admin/list_roles.php'); ?>">List Roles</a></li>
+                <li><a href="<?php echo project_url('admin/assign_roles.php'); ?>">Assign Roles</a></li>
+                <!-- Add these links inside the existing Admin-only block in partials/nav.php. -->
+                <li><a href="<?php echo project_url('admin/create_stock.php'); ?>">Create Stock</a></li>
+                <li><a href="<?php echo project_url('admin/list_stocks.php'); ?>">List Stocks</a></li>
+                <li><a href="<?php echo project_url('admin/create_company.php'); ?>">Create Company</a></li>
+                <li><a href="<?php echo project_url('admin/list_companies.php'); ?>">List Companies</a></li>
+
+            <?php endif; ?>
             <li><a href="/project/logout.php">Logout</a></li>
         <?php else: ?>
             <li><a href="/project/login.php">Login</a></li>
