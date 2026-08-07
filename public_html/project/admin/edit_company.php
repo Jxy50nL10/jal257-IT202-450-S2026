@@ -106,6 +106,7 @@ if (!$company) {
             <button name="save" value="1" type="submit">Save Company</button>
         </form>
     </main>
-    <?php render_flash_messages(); ?>
+     <?php render_flash_messages(); ?>
+    <?php render_scripts(); ?>
 </body>
 </html>

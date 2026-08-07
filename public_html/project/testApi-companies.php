@@ -63,7 +63,8 @@ flash_errors($errors);
 
         <pre><?php var_dump($decoded); ?></pre>
     </main>
-    <?php render_flash_messages(); ?>
+     <?php render_flash_messages(); ?>
+    <?php render_scripts(); ?>
 </body>
 
 </html>
