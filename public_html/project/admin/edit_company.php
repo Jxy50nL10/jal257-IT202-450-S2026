@@ -45,13 +45,14 @@ if (isset($_POST["save"])) {
         ];
 
         try {
-            $db = getDB();
+            /*$db = getDB();
             $stmt = $db->prepare(
                 "UPDATE Companies
                  SET name = :name, type = :type, region = :region
                  WHERE id = :id"
             );
-            $stmt->execute($data);
+            $stmt->execute($data);*/
+            update("Companies", $data, ["id"], ["debug"=>true]);
             flash("Company updated", "success");
             header("Location: " . project_url("admin/list_companies.php"));
             exit;

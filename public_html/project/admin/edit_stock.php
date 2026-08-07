@@ -43,8 +43,18 @@ if (isset($_POST["save"])) {
             ":high" => $updated_values["high"],
             ":price" => $updated_values["price"],
         ];
-
         try {
+            // update($table_name, $data, $where_keys, $opts): table name, row data,
+            // WHERE array keys, optional settings.
+            update("Stocks", $data, ["id"], ["debug"=>true]);
+            flash("Updated stock", "success");
+            header("Location: " . project_url("admin/list_stocks.php"));
+            exit;
+        } catch (Throwable $e) {
+            error_log("Stock update helper failed: " . $e->getMessage());
+            $errors[] = "Unable to update stock.";
+        }
+        /*try {
             $db = getDB();
             $stmt = $db->prepare(
                 "UPDATE Stocks
@@ -58,7 +68,7 @@ if (isset($_POST["save"])) {
         } catch (PDOException $e) {
             error_log("Update stock failed: " . $e->getMessage());
             $errors[] = "Unable to update stock.";
-        }
+        }*/
     }
 }
 
@@ -83,11 +93,13 @@ if (!$stock) {
 ?>
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Stock</title>
 </head>
+
 <body>
     <?php render_nav(); ?>
     <main>
@@ -110,4 +122,5 @@ if (!$stock) {
     </main>
     <?php render_flash_messages(); ?>
 </body>
+
 </html>
