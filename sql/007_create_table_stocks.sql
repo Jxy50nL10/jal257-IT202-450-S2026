@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS `Stocks`
+(
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `symbol` VARCHAR(10) NOT NULL UNIQUE,
+    `open` DECIMAL(12, 4) DEFAULT 0,
+    `high` DECIMAL(12, 4) DEFAULT 0,
+    `low` DECIMAL(12, 4) DEFAULT 0,
+    `price` DECIMAL(12, 4) DEFAULT 0,
+    `change_percent` DECIMAL(8, 4) DEFAULT 0,
+    `volume` BIGINT DEFAULT 0,
+    `latest_trading_day` DATE NULL,
+    `is_api` TINYINT(1) DEFAULT 1,
+    `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `modified` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
