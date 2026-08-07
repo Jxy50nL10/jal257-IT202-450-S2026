@@ -199,7 +199,8 @@ flash_errors($errors);
             </form>
         </section>
     </main>
-    <?php render_flash_messages(); ?>
+     <?php render_flash_messages(); ?>
+    <?php render_scripts(); ?>
     <script>
         const stockFormButtons = document.querySelectorAll("[data-form-mode-button]");
         const stockFormPanels = document.querySelectorAll("[data-form-mode-panel]");

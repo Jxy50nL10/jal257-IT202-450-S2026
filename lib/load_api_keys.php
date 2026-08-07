@@ -2,7 +2,7 @@
 // lib/load_api_keys.php
 // String array of environment keys to look up.
 
-$env_keys = ["STOCK_API_KEY", "STOCK_API_HOST"];
+$env_keys = ["STOCK_API_KEY", "STOCK_API_HOST", "STARCRAFT_API_KEY", "STARCRAFT_API_HOST"];
 $ini_path = __DIR__ . "/.env";
 $ini = [];
 
