@@ -6,7 +6,7 @@ require_role("Admin");
 $stocks = [];
 
 try {
-    $db = getDB();
+    /*$db = getDB();
     $stmt = $db->prepare(
         "SELECT id, symbol, price, latest_trading_day, is_api
          FROM Stocks
@@ -14,7 +14,13 @@ try {
          LIMIT 10"
     );
     $stmt->execute();
-    $stocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stocks = $stmt->fetchAll(PDO::FETCH_ASSOC);*/
+    $stocks = selectAll(
+        "SELECT id, symbol, price, latest_trading_day, is_api
+         FROM Stocks
+         ORDER BY modified DESC
+         LIMIT 10"
+    );
 } catch (PDOException $e) {
     error_log("List stocks failed: " . $e->getMessage());
     flash("Unable to load stocks.", "danger");
@@ -22,18 +28,26 @@ try {
 ?>
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stocks</title>
 </head>
+
 <body>
     <?php render_nav(); ?>
     <main>
         <h1>Stocks</h1>
         <table>
             <thead>
-                <tr><th>Symbol</th><th>Price</th><th>Latest Trading Day</th><th>Source</th><th>Action</th></tr>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Price</th>
+                    <th>Latest Trading Day</th>
+                    <th>Source</th>
+                    <th>Action</th>
+                </tr>
             </thead>
             <tbody>
                 <?php foreach ($stocks as $stock): ?>
@@ -60,4 +74,5 @@ try {
     </main>
     <?php render_flash_messages(); ?>
 </body>
+
 </html>

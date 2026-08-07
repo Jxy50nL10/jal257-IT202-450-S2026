@@ -71,8 +71,41 @@ if (isset($_POST["fetch_companies"])) {
 if ($rows && empty($errors)) {
     $saved = 0;
     $duplicates = 0;
-
     try {
+        foreach ($rows as $row) {
+            try {
+                // insert($table_name, $data, $opts): table name, one row, optional settings.
+                $result = insert("Companies", $row);
+                $saved += $result["rowCount"];
+            } catch (PDOException $e) {
+                $error_code = 0;
+                if (isset($e->errorInfo[1])) {
+                    $error_code = (int)$e->errorInfo[1];
+                }
+
+                // Skip this duplicate, then continue saving later rows.
+                if ($error_code === 1062) {
+                    $duplicates++;
+                    continue;
+                }
+                throw $e;
+            }
+        }
+
+        if ($saved > 0) {
+            flash("Saved $saved company record(s).", "success");
+        }
+        if ($duplicates > 0) {
+            flash("Skipped $duplicates duplicate company record(s).", "warning");
+        }
+        header("Location: " . project_url("admin/list_companies.php"));
+        exit;
+    } catch (Throwable $e) {
+        error_log("Company insert helper failed: " . $e->getMessage());
+        flash("Unable to save the company records.", "danger");
+    }
+
+    /*try {
         $db = getDB();
         $stmt = $db->prepare(
             "INSERT INTO Companies (symbol, name, type, region, currency, is_api)
@@ -103,7 +136,7 @@ if ($rows && empty($errors)) {
     } catch (PDOException $e) {
         error_log("Create companies failed: " . $e->getMessage());
         flash("Unable to save the company records.", "danger");
-    }
+    }*/
 }
 
 flash_errors($errors);
@@ -111,11 +144,13 @@ flash_errors($errors);
 <!-- TODO add the create company form snippet here. -->
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Company</title>
 </head>
+
 <body>
     <?php render_nav(); ?>
     <main>
@@ -126,7 +161,9 @@ flash_errors($errors);
             <button data-form-mode-button="create" type="button">Create Manually</button>
         </div>
 
-        <section data-form-mode-panel="fetch"<?php if ($active_form !== "fetch") { echo " hidden"; } ?>>
+        <section data-form-mode-panel="fetch" <?php if ($active_form !== "fetch") {
+                                                    echo " hidden";
+                                                } ?>>
             <form method="post">
                 <h2>Search The API</h2>
                 <label for="search">Search text</label>
@@ -135,7 +172,9 @@ flash_errors($errors);
             </form>
         </section>
 
-        <section data-form-mode-panel="create"<?php if ($active_form !== "create") { echo " hidden"; } ?>>
+        <section data-form-mode-panel="create" <?php if ($active_form !== "create") {
+                                                    echo " hidden";
+                                                } ?>>
             <form method="post">
                 <h2>Create Manually</h2>
                 <label for="symbol">Symbol</label>
@@ -162,16 +201,16 @@ flash_errors($errors);
         const companyFormPanels = document.querySelectorAll("[data-form-mode-panel]");
 
         function showCompanyForm(mode) {
-            companyFormPanels.forEach(function (panel) {
+            companyFormPanels.forEach(function(panel) {
                 panel.hidden = panel.dataset.formModePanel !== mode;
             });
-            companyFormButtons.forEach(function (button) {
+            companyFormButtons.forEach(function(button) {
                 button.setAttribute("aria-pressed", button.dataset.formModeButton === mode ? "true" : "false");
             });
         }
 
-        companyFormButtons.forEach(function (button) {
-            button.addEventListener("click", function () {
+        companyFormButtons.forEach(function(button) {
+            button.addEventListener("click", function() {
                 showCompanyForm(button.dataset.formModeButton);
             });
         });
@@ -179,4 +218,5 @@ flash_errors($errors);
         showCompanyForm("<?php echo $active_form; ?>");
     </script>
 </body>
+
 </html>
