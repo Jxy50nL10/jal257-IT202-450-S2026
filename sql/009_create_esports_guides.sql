@@ -1,4 +1,3 @@
--- sql/009_create_table_guides.sql
 CREATE TABLE IF NOT EXISTS Esports (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     api_id VARCHAR(100) NULL,

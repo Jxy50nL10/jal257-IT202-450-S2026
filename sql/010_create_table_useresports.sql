@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS UserEsports (
+    id INT NOT NULL AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    esports_id INT UNSIGNED NOT NULL,
+    is_active TINYINT(1) NOT NULL DEFAULT 1,
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+
+    UNIQUE (user_id, esports_id),
+
+    FOREIGN KEY (user_id)
+        REFERENCES Users (id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (esports_id)
+        REFERENCES Esports (id)
+        ON DELETE CASCADE
+);
