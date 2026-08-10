@@ -1,46 +1,290 @@
 <?php
-// public_html/project/admin/delete_guide.php
+// public_html/project/admin/create_esports.php
+
 require_once(__DIR__ . "/../../../lib/app.php");
 require_role("Admin");
 
-$allowed_return_pages = [
-    "guides.php" => project_url("guides.php"),
-    "admin/list_guides.php" => project_url("admin/list_guides.php"),
-];
-$return_to = $allowed_return_pages["guides.php"];
-if (isset($_GET["return_to"]) && is_string($_GET["return_to"])) {
-    $requested_return_to = $_GET["return_to"];
-    if (isset($allowed_return_pages[$requested_return_to])) {
-        $return_to = $allowed_return_pages[$requested_return_to];
+$errors = [];
+$q = "";
+$api_id = "";
+$name = "";
+$category_name = "";
+$score = "";
+$type = "";
+$action = "";
+
+if (isset($_POST["action"]) && is_string($_POST["action"])) {
+    $action = $_POST["action"];
+}
+
+$active_form = "api";
+
+if ($action === "create_esports_content") {
+    $active_form = "manual";
+}
+
+if (isset($_POST["q"]) && is_string($_POST["q"])) {
+    $q = trim($_POST["q"]);
+}
+
+if ($action === "import_esports_content") {
+    try {
+        $esports_content = fetch_esports_content($q, $errors);
+
+        if (empty($errors) && !empty($esports_content)) {
+            $result = insert("Esports", $esports_content, [
+                "update_duplicate" => true,
+                "columns_to_update" => [
+                    "name",
+                    "category_name",
+                    "score",
+                    "type",
+                ],
+            ]);
+
+            flash(
+                $result["rowCount"] . " API esports row(s) saved.",
+                "success"
+            );
+
+            header("Location: " . project_url("admin/create_esports.php"));
+            exit;
+        }
+    } catch (Throwable $e) {
+        error_log("Esports import failed: " . $e->getMessage());
+        $errors[] = "The esports content could not be imported.";
     }
 }
 
-$id = (int)($_GET["id"] ?? 0);
-if ($id <= 0) {
-    flash("Missing guide id.", "danger");
-    header("Location: " . $return_to);
-    exit;
-}
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    flash("Use the guide list to delete a guide.", "warning");
-    header("Location: " . $return_to);
-    exit;
-}
-
-try {
-    $db = getDB();
-    $stmt = $db->prepare("DELETE FROM Esports WHERE id = :id LIMIT 1");
-    $stmt->execute([":id" => $id]);
-
-    if ($stmt->rowCount() === 1) {
-        flash("Guide deleted.", "success");
-    } else {
-        flash("Guide not found.", "warning");
+if ($action === "create_esports_content") {
+    if (isset($_POST["api_id"]) && is_string($_POST["api_id"])) {
+        $api_id = trim($_POST["api_id"]);
     }
-} catch (PDOException $e) {
-    error_log("Guide deletion failed: " . $e->getMessage());
-    flash("The guide could not be deleted.", "danger");
+
+    if (isset($_POST["name"]) && is_string($_POST["name"])) {
+        $name = trim($_POST["name"]);
+    }
+
+    if (isset($_POST["category_name"]) && is_string($_POST["category_name"])) {
+        $category_name = trim($_POST["category_name"]);
+    }
+
+    if (isset($_POST["score"]) && is_string($_POST["score"])) {
+        $score = trim($_POST["score"]);
+    }
+
+    if (isset($_POST["type"]) && is_string($_POST["type"])) {
+        $type = trim($_POST["type"]);
+    }
+
+    if ($name === "" || strlen($name) > 150) {
+        $errors[] = "Name is required and must be 150 characters or less.";
+    }
+
+    if ($category_name !== "" && strlen($category_name) > 100) {
+        $errors[] = "Category name must be 100 characters or less.";
+    }
+
+    if ($api_id !== "" && !ctype_digit($api_id)) {
+        $errors[] = "API ID must be a valid number.";
+    }
+
+    if ($score !== "" && !is_numeric($score)) {
+        $errors[] = "Score must be a valid number.";
+    }
+
+    if ($type !== "" && strlen($type) > 50) {
+        $errors[] = "Type must be 50 characters or less.";
+    }
+
+    if (empty($errors)) {
+        try {
+            insert("Esports", [
+                "api_id" => $api_id === "" ? null : $api_id,
+                "name" => $name,
+                "category_name" => $category_name === "" ? null : $category_name,
+                "score" => $score === "" ? null : $score,
+                "type" => $type === "" ? null : $type,
+            ]);
+
+            flash("Esports entry created.", "success");
+
+            header("Location: " . project_url("admin/create_esports.php"));
+            exit;
+        } catch (Throwable $e) {
+            error_log("Manual esports creation failed: " . $e->getMessage());
+            $errors[] = "The esports entry could not be created.";
+        }
+    }
 }
 
-header("Location: " . $return_to);
-exit;
+flash_errors($errors);
+?>
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <?php render_head("Create Esports Content"); ?>
+</head>
+
+<body>
+
+<?php render_nav(); ?>
+
+<main class="container py-4">
+
+    <h1>Create Esports Content</h1>
+
+    <div class="mb-3">
+        <button
+            type="button"
+            class="btn btn-primary"
+            data-guide-form="api">
+            API Import
+        </button>
+
+        <button
+            type="button"
+            class="btn btn-outline-primary"
+            data-guide-form="manual">
+            Manual
+        </button>
+    </div>
+
+    <div class="row g-4">
+
+        <section
+            id="guideApiForm"
+            class="col-12"
+            <?php if ($active_form !== "api"): ?>hidden<?php endif; ?>>
+
+            <h2>Import API Esports Content</h2>
+
+            <form method="post">
+                <?php
+
+                render_input([
+                    "label" => "Search",
+                    "name" => "q",
+                    "value" => $q,
+                ]);
+
+                render_button([
+                    "text" => "Import API Esports Content",
+                    "variant" => "success",
+                    "attributes" => [
+                        "name" => "action",
+                        "value" => "import_esports_content",
+                    ],
+                ]);
+
+                ?>
+            </form>
+        </section>
+
+        <section
+            id="guideManualForm"
+            class="col-12"
+            <?php if ($active_form !== "manual"): ?>hidden<?php endif; ?>>
+
+            <h2>Create Manual Esports Content</h2>
+
+            <form method="post">
+                <?php
+
+                render_input([
+                    "label" => "API ID",
+                    "type" => "number",
+                    "name" => "api_id",
+                    "value" => $api_id,
+                ]);
+
+                render_input([
+                    "label" => "Name",
+                    "name" => "name",
+                    "value" => $name,
+                    "attributes" => [
+                        "required" => true,
+                        "maxlength" => 150,
+                    ],
+                ]);
+
+                render_input([
+                    "label" => "Category Name",
+                    "name" => "category_name",
+                    "value" => $category_name,
+                    "attributes" => [
+                        "maxlength" => 100,
+                    ],
+                ]);
+
+                render_input([
+                    "label" => "Score",
+                    "type" => "number",
+                    "name" => "score",
+                    "value" => $score,
+                    "attributes" => [
+                        "step" => "0.01",
+                    ],
+                ]);
+
+                render_input([
+                    "label" => "Type",
+                    "name" => "type",
+                    "value" => $type,
+                    "attributes" => [
+                        "maxlength" => 50,
+                    ],
+                ]);
+
+                render_button([
+                    "text" => "Create Manual Esports Content",
+                    "attributes" => [
+                        "name" => "action",
+                        "value" => "create_esports_content",
+                    ],
+                ]);
+
+                ?>
+            </form>
+        </section>
+
+    </div>
+
+    <script>
+        const apiGuideForm = document.querySelector("#guideApiForm");
+        const manualGuideForm = document.querySelector("#guideManualForm");
+        const guideFormButtons = document.querySelectorAll("[data-guide-form]");
+
+        function showGuideForm(formName) {
+            const showApiForm = formName === "api";
+
+            apiGuideForm.hidden = !showApiForm;
+            manualGuideForm.hidden = showApiForm;
+
+            guideFormButtons.forEach((button) => {
+                const isSelected = button.dataset.guideForm === formName;
+
+                button.classList.toggle("btn-primary", isSelected);
+                button.classList.toggle("btn-outline-primary", !isSelected);
+                button.setAttribute("aria-pressed", String(isSelected));
+            });
+        }
+
+        guideFormButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                showGuideForm(button.dataset.guideForm);
+            });
+        });
+
+        showGuideForm("<?php echo htmlspecialchars($active_form); ?>");
+    </script>
+
+</main>
+
+<?php render_flash_messages(); ?>
+<?php render_scripts(); ?>
+
+</body>
+</html>

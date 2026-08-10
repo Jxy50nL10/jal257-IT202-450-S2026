@@ -126,7 +126,7 @@ if (has_role("Admin")) {
     <main class="container py-4">
         <h1>Esports Content</h1>
 
-        <?php render_esports_search($filters, $limit); ?>
+        <?php //render_esports_content($filters, $limit); ?>
 
         <?php
         render_table(

@@ -4,8 +4,8 @@ require_once(__DIR__ . "/../../../lib/app.php");
 require_role("Admin");
 
 $allowed_return_pages = [
-    "guides.php" => project_url("guides.php"),
-    "admin/list_guides.php" => project_url("admin/list_guides.php"),
+    "guides.php" => project_url("esports.php"),
+    "admin/list_esports.php" => project_url("admin/list_esports.php"),
 ];
 $return_to = $allowed_return_pages["guides.php"];
 if (isset($_GET["return_to"]) && is_string($_GET["return_to"])) {
