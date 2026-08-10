@@ -98,7 +98,7 @@ function render_table(
  * @param array $filters Current title, category, game, and race filters.
  * @param int $limit Valid maximum number of guide rows to display.
  */
-function render_guide_search(array $filters, int $limit): void
+function render_esports_search(array $filters, int $limit): void
 {
     require(__DIR__ . "/../partials/guide_search.php");
 }
