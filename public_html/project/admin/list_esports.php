@@ -4,81 +4,79 @@
 require_once(__DIR__ . "/../../../lib/app.php");
 require_role("Admin");
 
-$filters = [
-    "name" => "",              // CHANGED
-    "category_name" => "",     // CHANGED
-    "score" => "",             // CHANGED
-    "type" => "",              // CHANGED
+$sort_options = [
+    "modified" => "Recently Updated",
+    "name" => "Name",
+    "category_name" => "Category",
+    "score" => "Score",
+    "type" => "Type",
+    "api_id" => "API ID",
 ];
 
-// Read only the expected filters from the query string.
-foreach ($filters as $filter_name => $value) {
-    if (isset($_GET[$filter_name]) && is_string($_GET[$filter_name])) {
-        $filters[$filter_name] = trim($_GET[$filter_name]);
-    }
-}
+$allowed_sort_columns = array_keys($sort_options);
 
-$limit = 10;
+$list_config = [
+    "filters" => esports_filter_rules(),
+    // Each submitted sort key matches its trusted SQL column on these pages.
+    "sort_columns" => $allowed_sort_columns,
+];
 
-if (isset($_GET["limit"]) && is_string($_GET["limit"])) {
-    $requested_limit = filter_var(
-        $_GET["limit"],
-        FILTER_VALIDATE_INT,
-        ["options" => ["min_range" => 1, "max_range" => 100]]
-    );
+$list_state = build_list_query_state($_GET, $list_config);
 
-    if ($requested_limit !== false) {
-        $limit = $requested_limit;
-    }
-}
+$filters = $list_state["filters"];
+$sort = $list_state["sort"];
+$direction = $list_state["direction"];
+$order_by = $list_state["order_by"];
+$limit = $list_state["limit"];
 
-$where_parts = [];
-$params = [];
-
-if (!empty($filters["name"])) {                         // CHANGED
-    $where_parts[] = "name LIKE :name";
-    $params["name"] = "%" . $filters["name"] . "%";
-}
-
-if (!empty($filters["category_name"])) {                // CHANGED
-    $where_parts[] = "category_name LIKE :category_name";
-    $params["category_name"] = "%" . $filters["category_name"] . "%";
-}
-
-if ($filters["score"] !== "") {                         // CHANGED
-    if (is_numeric($filters["score"])) {
-        $where_parts[] = "score = :score";
-        $params["score"] = $filters["score"];
-    }
-}
-
-if (!empty($filters["type"])) {                         // CHANGED
-    $where_parts[] = "type LIKE :type";
-    $params["type"] = "%" . $filters["type"] . "%";
-}
+$filter_query = build_esports_filter_query($filters);
 
 $where = "";
 
-if ($where_parts) {
-    $where = "WHERE " . implode(" AND ", $where_parts);
+if (!empty($filter_query["sql"])) {
+    $where = "WHERE " . $filter_query["sql"];
 }
 
+$params = $filter_query["params"];
 $esports_content = [];                                  // CHANGED
 
+// In esports.php and admin/list_esports.php, replace the existing $esports query
+// block with this code. The prior block created $where, $params, and $order_by.
+
+$matching_count = 0;
+$esports = [];
+
 try {
-    $esports_content = selectAll(                       // CHANGED
-        "SELECT id, name, category_name, score, type,
+    // The count uses the same filters but no ORDER BY or LIMIT.
+    $count_row = select(
+        "SELECT COUNT(*) AS total
+         FROM esports
+         $where
+         LIMIT 1",
+        $params
+    );
+
+    $matching_count = (int) ($count_row["total"] ?? 0);
+
+    $esports = selectAll(
+        "SELECT id, api_id, name, category_name, score, type,
                 IF(api_id IS NULL, 'Manual', 'API') AS source
          FROM Esports
          $where
-         ORDER BY modified DESC
+         ORDER BY $order_by, id ASC
          LIMIT $limit",
         $params
     );
+
 } catch (Throwable $e) {
-    error_log("Admin esports content list failed: " . $e->getMessage());
+    error_log("Esports list failed: " . $e->getMessage());
     flash("Esports content could not be loaded.", "danger");
 }
+
+$shown_count = count($esports);
+
+// Keep each page's existing column/action setup and HTML page shell below.
+
 
 $esports_columns = [                                    // CHANGED
     "name" => "Name",
@@ -110,14 +108,23 @@ $esports_actions = [                                    // CHANGED
 </head>
 
 <body>
-    <?php render_nav(); ?>
+    <?php render_nav(
+        render_esports_search(
+    $filters,
+    $limit,
+    $sort,
+    $direction,
+    $sort_options
+        )
+    ); ?>
 
     <main class="container py-4">
         <h1>Manage Esports Content</h1>
 
-        <?php //render_esports_search($filters, $limit); ?>
+        
 
         <?php
+        render_result_summary($shown_count, $matching_count);
         render_table(
             $esports_content,
             $esports_columns,

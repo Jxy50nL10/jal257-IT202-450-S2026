@@ -100,6 +100,41 @@ function render_table(
  */
 function render_esports_search(array $filters, int $limit): void
 {
-    require(__DIR__ . "/../partials/guide_search.php");
+    require(__DIR__ . "/../partials/esports_search.php");
+}
+// lib/render_functions.php
+// Keep every existing helper, including the updated render_guide_search(), above.
+// Append these three helpers immediately before the closing PHP tag.
+
+/** Renders the current row count compared with all filtered matches. */
+function render_result_summary(int $shown_count, int $matching_count): void
+{
+    require(__DIR__ . "/../partials/result_summary.php");
+}
+
+/**
+ * Renders one StarCraft guide as either a list card or detail card.
+ *
+ * @param array $guide Guide data selected from the database.
+ * @param array $options Supports show_detail_view and show_saved_on.
+ */
+function render_esports_card(array $guide, array $options = []): void
+{
+    require(__DIR__ . "/../partials/esports_card.php");
+}
+
+/**
+ * Renders the reference project's StarCraft guide-card grid.
+ *
+ * @param array $guides Guide rows to display.
+ * @param array $card_options Options passed to every guide card.
+ * @param string $empty_message Message displayed when no guides match.
+ */
+function render_grid(
+    array $guides,
+    array $card_options = [],
+    string $empty_message = "No guides matched the selected filters."
+): void {
+    require(__DIR__ . "/../partials/esports_grid.php");
 }
 ?>

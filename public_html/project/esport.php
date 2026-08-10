@@ -10,82 +10,75 @@ if ($id <= 0) {
     exit;
 }
 
-$guide = null;
+$user_id = get_user_id(); // returns 0 when not logged in
+
+$esport = null;
+
 try {
-    $guide = select(
-        "SELECT id, api_id, excerpt, game, primary_category, slug,
-                source_author, source_url, status, summary, title, video,
-                opponent_race, player_race, matchup, created, modified
-         FROM Guides
-         WHERE id = :id
+    $esport = select(
+        "SELECT e.id, e.api_id, e.name, e.category_name,
+                e.score, e.type, e.created, e.modified,
+                EXISTS (
+                    SELECT 1
+                    FROM UserEsports ue
+                    WHERE ue.esports_id = e.id
+                      AND ue.user_id = :user_id
+                      AND ue.is_active = 1
+                ) AS is_saved
+         FROM Esports e
+         WHERE e.id = :id
          LIMIT 1",
-        ["id" => $id]
+        [
+            "id" => $id,
+            "user_id" => $user_id
+        ]
     );
 } catch (Throwable $e) {
-    error_log("Guide lookup failed: " . $e->getMessage());
-    flash("The guide could not be loaded.", "danger");
-    header("Location: " . project_url("esports.php"));
+    error_log("Esports lookup failed: " . $e->getMessage());
+
+    flash(
+        "The esports content could not be loaded.",
+        "danger"
+    );
+
+    header(
+        "Location: " .
+        project_url("esports.php")
+    );
+
     exit;
 }
-if ($guide === null) {
-    flash("Guide not found.", "warning");
-    header("Location: " . project_url("guides.php"));
+
+if ($esport === null) {
+    flash(
+        "Esports content not found.",
+        "warning"
+    );
+
+    header(
+        "Location: " .
+        project_url("esports.php")
+    );
+
     exit;
 }
-$video_url = sc_nullable_url($guide["video"] ?? null);
+$video_url = sc_nullable_url($esport["video"] ?? null);
 ?>
 <!doctype html>
 <html lang="en">
-<head><?php render_head($guide["title"]); ?></head>
-<body>
-    <?php render_nav(); ?>
-    <main class="container py-4">
-        <article class="card">
-            <div class="card-body">
-                <h1 class="card-title"><?php echo htmlspecialchars($guide["title"]); ?></h1>
-                <p class="text-body-secondary">
-                    <?php echo htmlspecialchars((string) $guide["game"]); ?> |
-                    <?php echo htmlspecialchars((string) ($guide["primary_category"] ?? "Uncategorized")); ?> |
-                    <?php echo htmlspecialchars((string) ($guide["status"] ?? "Unknown status")); ?>
-                </p>
+<head><?php render_head($esport["title"]); ?></head>
+<?php
+// In esport.php, keep the page shell and <main> element.
+// Replace the existing <article class="card">...</article> block with this code.
+$card_options = [
+    "show_detail_view" => true,
+];
+render_esports_card($esport, $card_options);
+?>
 
-                <dl class="row">
-                    <dt class="col-sm-3">Player Race</dt>
-                    <dd class="col-sm-9"><?php echo htmlspecialchars((string) ($guide["player_race"] ?? "Any")); ?></dd>
-                    <dt class="col-sm-3">Opponent Race</dt>
-                    <dd class="col-sm-9"><?php echo htmlspecialchars((string) ($guide["opponent_race"] ?? "Any")); ?></dd>
-                    <?php if (!empty($guide["matchup"])): ?>
-                        <dt class="col-sm-3">Matchup</dt>
-                        <dd class="col-sm-9"><?php echo htmlspecialchars((string) $guide["matchup"]); ?></dd>
-                    <?php endif; ?>
-                </dl>
+</main>
 
-                <?php if (!empty($guide["excerpt"])): ?>
-                    <p class="lead"><?php echo htmlspecialchars((string) $guide["excerpt"]); ?></p>
-                <?php endif; ?>
-                <?php if (!empty($guide["summary"])): ?>
-                    <p class="card-text"><?php echo nl2br(htmlspecialchars((string) $guide["summary"])); ?></p>
-                <?php endif; ?>
-
-                <?php if (!empty($guide["source_url"])): ?>
-                    <p>
-                        <a href="<?php echo htmlspecialchars((string) $guide["source_url"]); ?>"
-                            target="_blank" rel="noopener noreferrer">
-                            <?php echo htmlspecialchars((string) ($guide["source_author"] ?? "Original source")); ?>
-                        </a>
-                    </p>
-                <?php endif; ?>
-                <?php if ($video_url !== null): ?>
-                    <p>
-                        <a href="<?php echo htmlspecialchars($video_url); ?>"
-                            target="_blank" rel="noopener noreferrer">Watch Video</a>
-                    </p>
-                <?php endif; ?>
-                <a class="btn btn-secondary" href="<?php echo project_url("guides.php"); ?>">Back To Guides</a>
-            </div>
-        </article>
-    </main>
-    <?php render_flash_messages(); ?>
-    <?php render_scripts(); ?>
+<?php render_flash_messages(); ?>
+<?php render_scripts(); ?>
 </body>
 </html>
