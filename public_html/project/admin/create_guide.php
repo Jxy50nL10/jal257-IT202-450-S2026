@@ -135,12 +135,12 @@ flash_errors($errors);
 <!doctype html>
 <html lang="en">
 <head>
-    <?php render_head("Create StarCraft Guide"); ?>
+    <?php render_head("Create Rainbow 6 Siege Guide"); ?>
 </head>
 <body>
     <?php render_nav(); ?>
     <main class="container py-4">
-        <h1>Create StarCraft Guide</h1>
+        <h1>Create Rainbow 6 Siege Guide</h1>
 <div class="btn-group mb-4" role="group" aria-label="Guide creation method">
     <button
         class="btn btn-outline-primary"

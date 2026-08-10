@@ -90,38 +90,41 @@ function map_sc_guide(array $guide, array &$errors): ?array
  * @param array $errors Shared validation-style error list.
  * @return array Project-shaped guide rows.
  */
-function fetch_starcraft_guides(string $game, array &$errors): array
+function map_esports_content(array $result, array &$errors): array
 {
-    $game = strtolower(trim($game));
-    $supported_games = ["sc1", "sc2"];
-    if (!in_array($game, $supported_games, true)) {
-        $errors[] = "Choose a supported StarCraft game.";
-        error_log("Unsupported StarCraft game requested: $game");
-        return [];
-    }
-
+    return [
+        "api_id" => $result["entity"]["id"] ?? null,
+        "name" => sc_nullable_string($result["entity"]["name"] ?? null),
+        "category_name" => sc_nullable_string($result["entity"]["category"]["name"] ?? null),
+        "score" => $result["score"] ?? null,
+        "type" => sc_nullable_string($result["type"] ?? null),
+    ];
+}
+function fetch_esports_content(string $q, array &$errors): array
+{
+    $q = strtolower(trim($q));
     $result = api_get(
-        "https://unofficial-starcraft-guides-api.p.rapidapi.com/api/v1/games/$game/guides/index.json",
-        [],
-        ["key_name" => "STARCRAFT_API_KEY", "host_name" => "STARCRAFT_API_HOST"]
+        "https://esportapi1.p.rapidapi.com/api/search/all",
+        ["q"=>$q],
+        ["key_name" => "ESPORTS_API_KEY", "host_name" => "ESPORTS_API_HOST"]
     );
-    $decoded = decode_api_response($result, "guides", $errors);
+    $decoded = decode_api_response($result, "results", $errors);
     if ($decoded === null) {
         return [];
     }
 
-    $guides = [];
-    foreach ($decoded["guides"] as $guide) {
-        if (!is_array($guide)) {
+    $results = [];
+    foreach ($decoded["results"] as $result) {
+        if (!is_array($result)) {
             $errors[] = "The API returned an invalid guide item.";
             continue;
         }
 
-        $mapped = map_sc_guide($guide, $errors);
+        $mapped = map_esports_content($result, $errors);
         if ($mapped !== null) {
-            $guides[] = $mapped;
+            $results[] = $mapped;
         }
     }
 
-    return $guides;
+    return $results;
 }
