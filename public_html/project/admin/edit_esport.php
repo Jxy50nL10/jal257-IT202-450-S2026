@@ -6,7 +6,7 @@ require_role("Admin");
 $id = (int)($_GET["id"] ?? 0);
 if ($id <= 0) {
     flash("Missing guide id.", "danger");
-    header("Location: " . project_url("admin/list_guides.php"));
+    header("Location: " . project_url("admin/list_esports.php"));
     exit;
 }
 
@@ -81,7 +81,7 @@ if (isset($_POST["action"]) && $_POST["action"] === "update_guide") {
                 "source_url" => $source_url_value,
             ]);
             flash("Guide updated.", "success");
-            header("Location: " . project_url("admin/edit_guide.php?id=$id"));
+            header("Location: " . project_url("admin/edit_esport.php?id=$id"));
             exit;
         } catch (Throwable $e) {
             error_log("Guide update failed: " . $e->getMessage());
@@ -105,12 +105,12 @@ try {
 } catch (Throwable $e) {
     error_log("Guide lookup failed: " . $e->getMessage());
     flash("The guide could not be loaded.", "danger");
-    header("Location: " . project_url("admin/list_guides.php"));
+    header("Location: " . project_url("admin/list_esports.php"));
     exit;
 }
 if ($guide === null) {
     flash("Guide not found.", "warning");
-    header("Location: " . project_url("admin/list_guides.php"));
+    header("Location: " . project_url("admin/list_esports.php"));
     exit;
 }
 
