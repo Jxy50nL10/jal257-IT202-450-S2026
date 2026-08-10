@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 
 try {
     $db = getDB();
-    $stmt = $db->prepare("DELETE FROM Guides WHERE id = :id LIMIT 1");
+    $stmt = $db->prepare("DELETE FROM Esports WHERE id = :id LIMIT 1");
     $stmt->execute([":id" => $id]);
 
     if ($stmt->rowCount() === 1) {
