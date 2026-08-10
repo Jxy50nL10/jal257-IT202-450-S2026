@@ -1,14 +1,14 @@
 <?php
-// public_html/project/testApi-stock.php
+// public_html/project/testApi-companies.php
 require_once(__DIR__ . "/../../lib/app.php");
 
-$symbol = "IBM";
-if (isset($_POST["symbol"])) {
-    $submitted_symbol = $_POST["symbol"];
-    if (is_string($submitted_symbol)) {
-        $symbol = trim($submitted_symbol);
+$search = "micro";
+if (isset($_POST["search"])) {
+    $submitted_search = $_POST["search"];
+    if (is_string($submitted_search)) {
+        $search = trim($submitted_search);
     } else {
-        $symbol = "";
+        $search = "";
     }
 }
 $decoded = null;
@@ -19,21 +19,21 @@ if (isset($_POST["source"])) {
 
     if ($source !== "live" && $source !== "sample") {
         $errors[] = "Choose a valid API source.";
-    } elseif ($source === "live" && $symbol === "") {
-        $errors[] = "Enter a stock symbol before sending the request.";
+    } elseif ($source === "live" && $search === "") {
+        $errors[] = "Enter search text before sending the request.";
     }
 
     if (empty($errors)) {
         if ($source === "sample") {
-            $result = api_sample_response("stock-quote.json");
+            $result = api_sample_response("company-search.json");
         } else {
             $result = api_get(
                 "https://alpha-vantage.p.rapidapi.com/query",
-                ["function" => "GLOBAL_QUOTE", "symbol" => $symbol],
+                ["function" => "SYMBOL_SEARCH", "keywords" => $search],
                 ["key_name" => "STOCK_API_KEY", "host_name" => "STOCK_API_HOST"]
             );
         }
-        $json_key = "Global Quote";
+        $json_key = "bestMatches";
         $decoded = decode_api_response($result, $json_key, $errors);
         $decoded = $decoded[$json_key];
     }
@@ -47,17 +47,17 @@ flash_errors($errors);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Stock API</title>
+    <title>Test Multiple Entities</title>
 </head>
 
 <body>
     <?php render_nav(); ?>
     <main>
-        <h1>Test Stock API</h1>
+        <h1>Test Multiple Entities</h1>
         <form method="post">
-            <label for="symbol">Stock symbol</label>
-            <input id="symbol" name="symbol" value="<?php echo htmlspecialchars($symbol); ?>" required>
-            <button name="source" value="live" type="submit">Fetch Live Quote</button>
+            <label for="search">Search text</label>
+            <input id="search" name="search" value="<?php echo htmlspecialchars($search); ?>" required>
+            <button name="source" value="live" type="submit">Search Live API</button>
             <button name="source" value="sample" type="submit">Use Cached Sample</button>
         </form>
 
