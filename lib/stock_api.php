@@ -89,7 +89,7 @@ function fetch_quote(string $symbol, array &$errors): ?array
 function search_companies(string $keywords, array &$errors): array
 {
     $result = api_get(
-        "https://alpha-vantage.p.rapidapi.com/query",
+        "https://cs2-skin-prices.p.rapidapi.com/search",
         ["function" => "SYMBOL_SEARCH", "keywords" => $keywords],
         ["key_name" => "STOCK_API_KEY", "host_name" => "STOCK_API_HOST"]
     );

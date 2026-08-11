@@ -24,3 +24,9 @@ require_once(__DIR__ . "/api_helper.php");
 // Keep all existing imports, including api_helper.php.
 // Add this at the end of the helper-import list, after api_helper.php.
 require_once(__DIR__ . "/stock_api.php");
+// lib/app.php
+// Keep api_helper.php and any earlier API-specific imports in place.
+// Add the new wrapper alongside the other API wrappers.
+
+require_once(__DIR__ . "/esports_api.php");
+

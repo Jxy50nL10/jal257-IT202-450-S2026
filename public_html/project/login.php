@@ -74,36 +74,44 @@ $message = implode("<br>", array_map("htmlspecialchars", $errors));
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <?php render_head("Login"); ?>
 </head>
 
 <body>
     <?php render_nav(); ?>
-    <h1>Login</h1>
+    <main class="container py-4">
+        <h1>Login</h1>
 
-    <form method="post" action="login.php" onsubmit="return validate(this)">
-        <!-- Existing form structure stays the same. Replace only the login identifier field. -->
-        <!-- JS validation is a better place to split email-vs-username checks. -->
-        <label for="identifier">Email or Username</label>
-        <input
-            type="text"
-            id="identifier"
-            name="identifier"
-            required
-            autocomplete="username"
-            pattern="(?:[a-z0-9_\-]{3,30}|[^@\s]+@[^@\s]+\.[^@\s]+)"
-            title="Enter a username or email address"
-            value="<?php echo htmlspecialchars($identifier ?? ""); ?>">
+        <form method="post" action="login.php" onsubmit="return validate(this)">
+            <!-- Existing form structure stays the same. Replace only the login identifier field. -->
+            <!-- JS validation is a better place to split email-vs-username checks. -->
+             <?php
+    render_input([
+        "name" => "identifier",
+        "label" => "Email or Username",
+        "value" => $identifier,
+        "attributes" => [
+            "required" => true,
+            "autocomplete" => "username",
+            "pattern" => "(?:[a-z0-9_\\-]{3,30}|[^@\\s]+@[^@\\s]+\\.[^@\\s]+)",
+            "title" => "Enter a username or email address",
+        ],
+    ]);
 
-        <label for="password">Password</label>
-        <input id="password" name="password" type="password"
-            required minlength="8"
-            autocomplete="current-password">
-
-        <button type="submit">Login</button>
-    </form>
+    render_input([
+        "type" => "password",
+        "name" => "password",
+        "label" => "Password",
+        "attributes" => [
+            "required" => true,
+            "minlength" => 8,
+            "autocomplete" => "current-password",
+        ],
+    ]);
+    render_button(["text" => "Login"]);
+    ?>
+        </form>
+    </main>
     <script>
         function validate(form) {
             const message = document.getElementById("message");
@@ -130,7 +138,8 @@ $message = implode("<br>", array_map("htmlspecialchars", $errors));
         }
     </script>
     <!-- Last PHP inside <body> so it captures messages queued during this request. -->
-    <?php render_flash_messages(); ?>
+     <?php render_flash_messages(); ?>
+    <?php render_scripts(); ?>
 </body>
 
 </html>
