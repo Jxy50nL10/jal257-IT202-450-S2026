@@ -110,7 +110,7 @@ $shown_count = count($esports);
 if (has_role("Admin")) {
     $esports_actions[] = [
         "label" => "Edit",
-        "url" => "admin/edit_esports_content.php",
+        "url" => "admin/edit_esports.php",
         "variant" => "warning"
     ];
 
