@@ -1,6 +1,6 @@
 ## Project Name: (Esports Management System)
 ### Project Summary: (A web application that allows users to browse, save, and mange esports information)
-### Github Link: (https://github.com/Jxy50nL10/jal257-IT202-450-S2026/tree/prod/)
+### Github Link: (https://github.com/Jxy50nL10/jal257-IT202-450-S2026/blob/prod/public_html/proposal.md)
 ### Website Link: (https://jal257-it202-450-s2026-prod.onrender.com/)
 ### API Link: (https://rapidapi.com/fluis.lacasse/api/esportapi1/playground/apiendpoint_80d5a92b-35eb-49c3-a260-40216a3ca577)
 ### Your Name: Jayson Leon
