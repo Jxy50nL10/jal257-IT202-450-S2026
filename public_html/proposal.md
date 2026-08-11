@@ -10,7 +10,7 @@
  
 ### Proposal Checklist and Evidence
 <!-- Visit the respective branches on github, navigate to where the milestone pdf is
-select it to open/view it, then copy that url for the below items. -->
+select it to open/view it, then copy that url for the below items -->
 
 - Milestone 1
   - (https://courses.ethereallab.app/assignment/v3/IT202-450-M2026/it202-milestone-1-2026)  
