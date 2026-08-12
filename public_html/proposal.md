@@ -19,5 +19,5 @@ select it to open/view it, then copy that url for the below items -->
 - Milestone 3
   - (https://courses.ethereallab.app/assignment/v3/IT202-450-M2026/it202-milestone-3-2026)
 - Demo Link
-  - (add youtube link to unlisted or public demo) Note you'll need to verify your youtube account to upload videos > 15mins (https://youtu.be/djKUFbwTRf8)
+  - (add youtube link to unlisted or public demo) Note you'll need to verify your youtube account to upload videos > 15mins (https://youtu.be/3HJ12OuE9Pg)
   
